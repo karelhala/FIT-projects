@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project outputprefix="kblcd">
+
+    <!--  Project description -->
+    <name>Tetris</name>
+    <author>Karel Hala</author>
+    <authoremail>xhalak00@stud.fit.vutbr.cz</authoremail>
+    <revision>20090201</revision>
+    <description>Aplikace tetris pro predmet IMP.</description>
+
+    <!--  MCU part -->
+    <mcu>
+        <include>mcu/libs/keyboard/package.xml</include>
+        <include>mcu/libs/lcd/package.xml</include>
+        <file>main.c</file>
+    </mcu>
+
+    <!-- FPGA part -->
+    <fpga>
+        <include>fpga/ctrls/keyboard/package.xml</include>
+        <include>fpga/ctrls/lcd/package.xml</include>
+        <file>top_level.vhd</file>
+    </fpga>
+
+</project>

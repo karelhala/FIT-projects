@@ -1,0 +1,8 @@
+<!-- footer starts -->		
+<div id="footer">						
+	<p>
+	
+	<a href="http://www.bluewebtemplates.com/" title="Website Templates">website templates</a> by <a href="http://www.styleshout.com/">styleshout</a>
+	</p>	
+<!-- footer ends-->
+</div>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-2"/>
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>Název zadání</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>První jméno <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xhalak00@stud.fit.vutbr.cz">xhalak00@stud.fit.vutbr.cz</a>		
+	</dd>
+	<dd>Druhé jméno <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xhajic01@stud.fit.vutbr.cz">xhajic01@stud.fit.vutbr.cz</a>
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="http://www.stud.fit.vutbr.cz/~xhajic01/IIS/index.php">http://www.stud.fit.vutbr.cz/~xhajic01/IIS/index.php</a></dd>	
+</dl>
+
+<h2>Uživatelé systému pro testování</h2>
+<table>
+<tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin</td><td>admin</td><td>Administrátor</td></tr>
+<tr><td>halaka0</td><td>123</td><td>Hlavní technik</td></tr>
+<tr><td>hjeklu0</td><td>123</td><td>Hlavní technik</td></tr>
+<tr><td>blakbr0</td><td>123</td><td>Technik</td></tr>
+</table>
+
+<h2>Implementace</h2>
+<p>
+Pro implementaci jsme použili 2 verze <a href="http://jquery.com/">jquery</a> knihoven. Dále jsme použili <a href="http://flexigrid.info/">flexigrid</a> tabulku pro úhlednější práci s daty a jejich řazení. Dále jsme použili CSS <a href="http://www.bluewebtemplates.com/">template</a> pro lepší vzhled našeho systému.<br />
+Pro implementaci projektu jsme se neřídili usecase diagramem z IDS. Při bližším ohledání tohoto Use-case jsme zjistili že by náš systém nesplňoval veškeré vlastnosti, které jsme po něm vyžadovali.<br /><br />
+Změna Hesla je formulář používaný všemi rolemi v databázi. Obsahuje 3 texboxy, kam uživatel zadá staré heslo, nové a nové ověří.<br />
+Dále každá role má speciální menu, jednotlivé položky pro jednotlivé role jsou rozepsány zde:<br /></div>
+Admin<ul><li>Zamětsnanci - Zde může admin provádět přidávání, editaci a mazání zaměstnanců (obsahuje: form.php, index.php, system.php)</li>
+                <li>Certifikáty - Zde může admin provádět přidávání, editaci a mazání Certifikátů (obsahuje: form.php, index.php, system.php)</li>
+                <li>Test - Formulář, kde může admin a hlavní technik provádět práci s testy. Jejich editaci, mazání a přidávání.  (obsahuje: form.php, index.php, system.php)</li></ul>
+
+hlavní technik  <ul><li>Plány - Formulář pro hlavního technika, který zde může provádět přidávání jednotlivých plánů technikům. (obsahuje: form.php,grid.php,index.php,post-json.php,system.php,technici.php)</li>
+ <li>Přehled Plánů - Formulář pro vypsání všech plánů. Historie všech plánů, všech techniků. Tabulka se dá krásně seřadit a vybrat určité položky. (obsahuje: index.php,post-json.php)</li>
+ <li>Letadla - Formulář pro hlavního technika, který zde může přidávat letadla. Dále je může editovat a mazat. (obsahuje: form.php, index.php, system.php)</li>
+ <li>Certifikáty - Zde může hlavní technik přiřazovat certifikáty technikům a jednotlivým testům. Již přidané certifikáty se nezobrazují v roletce pro přidávání a dále nelze mazat nepřiřazené certifikáty. (obsahuje: index.php,post-json.php)</li>
+ <li>Testy - Formulář pro editaci testů. Jejich přidávání, odebírání a úpravu (obsahuje: form.php, index.php, system.php)</li>
+ <li>Mé testy - Formulář pro vytvoření výchozí zprávy k testu. Tento formulář má hlavní technik a klasický technik.(obsahuje: form.php, index.php)</li>
+ </ul>
+ <br />
+ Technik <ul>
+ <li>Mé testy - Formulář pro technika, který napíše výstupní zprávu k danému testu. (obsahuje: form.php, index.php)</li>
+ </ul>
+
+</p>
+
+<h2>Instalace</h2>
+<ul>
+<li>Instalaci systému na serveru provedeme, tak že rozbalíme archiv, nastavíme práva, spustíme script prop inicializaci databáze (databaze.sql). Databáze je naplněna ukázkovými daty, pokud je potřeba prázdná databáze, pouze s uživateleme admin, spustíme sql script (databaze_raw.sql)</li>
+<li>Systémové požadavky: PHP 5.3.17 , apache 1.3.41 , mysql 5.5.28 , podporu javascriptu<br /> Projekt byl testován na školním serveru Eva.</li>
+</ul>
+
+<h2>Známé problémy</h2>
+<p>Use case diagram z IDS jsme notně upravili. Jakožto nově vzniklý tým jsme si vybrali zadání jednoho člena a to Karel Hala (xhalak00).
+Zadání Letiště. Po bližším zaměření na Use-case jsme zjistili že nebude vhodně se jím na 100% řídit, jelikož by naše aplikace nebyla
+naprosto odpovídající našim představám. Tudíž jsme si vytvořili nový use-case. Ten se shoduje s use-case diagramem z IDS nicméně
+jsme jej notně upravili. Nicméně jsme se drželi zadání a vytvořili nový use-case diagram. Pokud bude potřeba kontaktujte mne na
+ <a href="mailto:xhalak00@stud.fit.vutbr.cz">xhalak00@stud.fit.vutbr.cz</a> a já vám zašlu elektronickou verzi.
+</p>
+
+</body>
+</html>

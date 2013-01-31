@@ -1,0 +1,4 @@
+iface=ix0,lo0
+port=15789
+secret=tak
+userdb=users.txt

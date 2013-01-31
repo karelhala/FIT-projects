@@ -1,0 +1,30 @@
+////////////////////////Jednoduchý autentizační server\\\\\\\\\\\\\\\\\\\\\\\\
+
+Autor: Karel Hala
+
+Program radauth nasloucha na jemu zadanadych zarizeni. A presne specifikovanemportu. Komunikuje pomoci UDP packetu a Postupne bere jeden packet za druhym ktery mu dosel a snazi se je rozsifrovat. 
+
+Maximalni velikost packetu RADIUS je 4096, ale maximalni delka UDP packetu je 65535 pokud tedy velikost packetu prekroci 4096 znaku zahodim jej a nepokracuji v dalsim zpracovani. Pokud dojde poruseny packet, ktery by vedl k nekonzistentnimu zachovani a zasahu do nedovolene pameti. Program vypise chybu a korektne se ukonci. Pokuddostane program neporuseny packet desifruje jej a ulozi do struktury, se kterou dale pracuje. Nejdrive se program pokusi vyhledat daneho uzivatele v databazi, pokud se mu tato zkutecnost nepovede odesle packet access-denied. 
+
+Pokud najde uzivatele zahashuje jeho heslo pomoci MD5 a overi zda se has co prisel v prichozim packetu shoduje s hashem ktery jsme vygenerovali. Pokud se shoduje odpovi sccess-accept, pokud se neshoduje odpovi access-rejected. 
+
+Jako povinne atributy v packetu beru login, passwd a NAS-identifier, nebo NAS-IP-Address
+
+Prazdne jmena uzivatelu program ignoruje, duplicitni jmena uzivatelu program ignoruje, prazdne hesla uzivatelu program ignoruje. Pokud se v konfiguracnim souboru nachazi chybne data vypise tuto zkutecnost a korektne se ukonci. Pokud chybi prepinac -c ocekava nastaveni ze standardniho vstupu.
+
+Program lze ukoncit korektne signaly SIGTERM, SIGQUIT nebo SIGINIT.
+
+Program jsem psal prevazne pod systemem FreeBSD. Nicmene by mel fungovat take pod OS Linux naprosto korektne a totozne jako pod OS FreeBSD.
+
+Spusteni: ./radauth -c <conf_file>
+
+obsah conf_file:
+iface=eth0,eth1 (rozhrani na kterych server nasloucha)
+port=11812 (port na kterem servet nasloucha)
+secret=tajneheslo (zdileny klic mezi serverem a uzivatelem)
+userdb=cesta_k_textovemu_souboru (cesta  databazi)
+
+Jednotliva data jsou oddeleny zarovnanim radku, viceradkove nastaveni,
+nebo nadbytecne data ignoruji.
+
+
