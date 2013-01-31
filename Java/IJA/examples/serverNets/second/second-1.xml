@@ -1,0 +1,80 @@
+<petrinets.PetriNet>
+  <places>
+    <petrinets.Place>
+      <x>240</x>
+      <y>74</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p1</name>
+      <tag>x</tag>
+      <values>
+        <int>1</int>
+        <int>2</int>
+        <int>3</int>
+        <int>4</int>
+      </values>
+    </petrinets.Place>
+    <petrinets.Place>
+      <x>383</x>
+      <y>76</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p2</name>
+      <tag>y</tag>
+      <values>
+        <int>4</int>
+        <int>5</int>
+        <int>6</int>
+      </values>
+    </petrinets.Place>
+    <petrinets.Place>
+      <x>308</x>
+      <y>359</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p3</name>
+      <tag>out</tag>
+      <values/>
+    </petrinets.Place>
+  </places>
+  <transitions>
+    <petrinets.Transition>
+      <x>289</x>
+      <y>213</y>
+      <width>88</width>
+      <height>40</height>
+      <name>e1</name>
+      <inPlaces>
+        <petrinets.Place reference="../../../../places/petrinets.Place"/>
+        <petrinets.Place reference="../../../../places/petrinets.Place[2]"/>
+      </inPlaces>
+      <outPlaces>
+        <petrinets.Place reference="../../../../places/petrinets.Place[3]"/>
+      </outPlaces>
+      <conditions>
+        <petrinets.Condition>
+          <first reference="../../../../../places/petrinets.Place"/>
+          <firstInt>0</firstInt>
+          <operator>GREATER</operator>
+          <second reference="../../../../../places/petrinets.Place[2]"/>
+          <secondInt>0</secondInt>
+        </petrinets.Condition>
+      </conditions>
+      <outputs>
+        <petrinets.Output>
+          <outPlace reference="../../../../../places/petrinets.Place[3]"/>
+          <variables>
+            <petrinets.SignedVariable>
+              <sign>PLUS</sign>
+              <name>x</name>
+            </petrinets.SignedVariable>
+            <petrinets.SignedVariable>
+              <sign>PLUS</sign>
+              <name>y</name>
+            </petrinets.SignedVariable>
+          </variables>
+        </petrinets.Output>
+      </outputs>
+    </petrinets.Transition>
+  </transitions>
+</petrinets.PetriNet>

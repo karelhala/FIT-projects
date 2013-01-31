@@ -1,0 +1,7 @@
+<client.GUI.settingsClass>
+  <outlines>black</outlines>
+  <innerBG>white</innerBG>
+  <chosen>green</chosen>
+  <fontColor>black</fontColor>
+  <joins>red</joins>
+</client.GUI.settingsClass>

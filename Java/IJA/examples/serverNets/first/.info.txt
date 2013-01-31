@@ -1,0 +1,9 @@
+author: charlie
+Latest version: 2
+Last changed by: charlie
+PetriNet's Name: first
+Last changed: Mon May 07 15:12:35 CEST 2012
+Net contains:
+5 places
+and
+2 transitions

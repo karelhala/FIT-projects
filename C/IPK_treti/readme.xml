@@ -1,0 +1,45 @@
+<ipk-projekt-3>
+<autor>Karel Hala</autor>
+<login>xhalak00@stud.fit.vutbr.cz</login>
+<datum>29.04.2012</datum>
+<soubory>
+	<soubor jmeno="rdtserver.cpp" autor="Karel Hala"/>
+    <soubor jmeno="rdtclient.cpp" autor="Karel Hala"/>
+	<soubor jmeno="base64.cpp" autor="René Nyffenegger"/>
+    <soubor jmeno="base64.h" autor="René Nyffenegger"/>
+    <soubor jmeno="udt.h" autor="Ondrej Rysavy"/>
+</soubory>
+<protokol>
+Protokol je implementovan Go Back N s pohyblivym oknem. Avsak neni presna definice a Presny pristup.
+Packety posilam v oknu porad dokola, nicmene nechtel jsem stale cekat na dpoved od serveru, tak posilam prubezne 
+packety v oknech. Jakmile odeslu vsechny packety, tak se podivam ktere prisli. A nedosle packety poslu znovu.
+
+Packet se sklada z hlavicky a tela. Hlavicka obsahuje informace o packetech a rto presneji. Cislo packetu
+(posledni je oznacen 0) a cislem posledniho packetu. Cislo posledniho packetu se uklada pouze v poslednim packetu.
+priklad :
+	rdt-segment id='xhalak00'
+		header
+			packet_number
+			5
+			/packet_number
+			last
+			/last
+		/header
+		data
+			bnViaWEgbm9zdHJhLCBwZXIg
+		/data
+	/rdt-segment
+
+Protokol je z casti nedokonaly. Je celkem pomaly. Prenos vetsich dat prinasi obrovske ztraty packetu
+a tudiz velke zpomaleni. Nicmene 1MB soubor program zvlada za minutu.
+Dale pri posilani vetsich souboru ma server problemy se zapisem. Zvlaste pokud je server spusten pzdeji
+nez client.
+Nicmene posilani a vytvareni packetu funguje perfektne. Jiz dlouhou dobu pred finalni verzi programu
+jsem mel funkcni posilani i 10MB souboru do 3minut. Pokud se neztratili zadne packety soubor byl
+uplny. Bohuzel s kontrolou ztraty packetu nastala nemila vec a to nemoznost poslat vetsi soubory
+a pomalejsi prenos. Nicmene jsem u tohohle projektu uvedomil velke mnozstvi doposud nejasnych 
+informaci. Avsak kontrola prichodu mne nebavila.
+
+
+</protokol>
+</ipk-projekt-3>

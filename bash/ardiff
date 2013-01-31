@@ -1,0 +1,352 @@
+#!/bin/ksh
+
+#------------------------------
+#--------napoveda--------------
+#------------------------------
+HELP="ardiff vypisuje zmeny archivu, vytvari rozdilovy archiv nebo aplikuje rozdilovy
+archiv na zdrojovy archiv.
+	Pouziti: ardiff [volby] archiv1 archiv2
+	Volby:
+	  -o SOUBOR  Pokud je cilem skriptu vytvorit archiv, bude vytvoren do souboru
+	             se jmenem SOUBOR (plati pro -c a -p).
+	  -l         Vypis seznamu souboru, ktere se v zadanych archivech lisi.
+	  -c         Vytvoreni rozdiloveho archivu.
+	  -p         Aplikace rozdiloveho archivu (argument archiv2) na zdrojovy archiv
+	             (argument archiv1).
+	  -r         Prepnuti do reverzniho rezimu (plati pro -p)."
+#------------------------------
+#nastaveni promennych ve kterych mam ulozeno, ktery prepinac je aktivni na false
+#------------------------------
+lparam=false
+cparam=false
+pparam=false
+rparam=false
+paramo=false
+#------------------------------
+#ziskani parametru funkci getopts
+#------------------------------
+while getopts  :lo:cprh param
+do
+  case $param in
+	l) lparam=true;;
+	o)
+		paramo=true
+		oparam="$OPTARG"
+		;;
+	c) cparam=true;;
+	p) pparam=true;;
+	r) rparam=true;;
+	h) echo "$HELP";exit 0;;
+	\?) echo "Nespravny argument, prectete si napovedu:";echo "$HELP"; exit 1;;
+	:)  echo "Chyba argumentu"; exit 1;;
+  esac
+done
+#posun argumenu, aby na miste $1 bylo jmeno nacitaneho a pozdeji rozbalovaneho souboru
+shift $(($OPTIND-1));
+#------------------------------
+#-korenovy adresar v /tmp/
+#------------------------------
+muj_soubor=`mktemp -dq /tmp/IOS_diff_koren.XXXXXXXXXXX|sed 's|/tmp/\(.*\)|\1|'`
+#promenne ve kterych mam olozenu cestu k docasnym rozbalenym souborum
+old=`mktemp -dq /tmp/$muj_soubor/oldies.XXXXXXXXXXX`
+new=`mktemp -dq /tmp/$muj_soubor/new.XXXXXXXXXXX`
+
+#------------------------------
+#-------- odchyceni chyb ------
+#------------------------------
+trap "rm -r /tmp/$muj_soubor ; exit 1" 1 2 15
+
+#------------------------------
+#funkce na rozbaleni archivu
+#------------------------------
+function rozbal
+{
+	case $1 in
+		"zip") unzip -qqo $2 -d $3 2>"/dev/null";; 
+		"tar") tar -xf $2	-C $3 2>"/dev/null";;
+		"bzip") tar -xf $2 -C $3 2>"/dev/null";;	
+		"gtar") tar -xf $2 -C $3 2>"/dev/null";;
+	esac
+}
+
+#------------------------------
+#funkce na zjisteni typu rozbalovaneho archivu
+#------------------------------
+function dostan
+{
+typ=`echo "$1"|sed 's/.*gzip.*/gtar/'|
+sed 's/.*Zip.*/zip/'|
+sed 's/.*tar.*/tar/'|
+sed 's/.*bzip2.*/bzip/'`
+}
+
+#------------------------------
+#funkce na zaznemani zmen v souborech (tuto funkci pozdeji pouzivam pri parametru -l a -c)
+#------------------------------
+function zapis_rozdily
+{
+	#orezu a seradim si cesty ve vstupnich souborech
+	stuff=`find $2 $1|sed "s|$2/\(.*\)|\1|"|sed "s|$1/\(.*\)|\1|"|sort|uniq`
+	#vysledek ulozim do souboru, ktery po ukonceni funkce smazu
+	echo "$stuff" >"/tmp/$muj_soubor/stuff_soubor"
+	while read myline
+		do
+
+#zjistim co je za typ kazda cesta, pokud je adresar testuju zda ve druhem adresari neni soubor. Pokud se v jednom nenechazi a je to soubor, vypisu, pokud najdu 2 soubory se stejnym jmenem porovnam je a pokud se lysi vypisu je
+			soubor=`file "$2/$myline"|sed 's|.*ERROR.*|ERROR|'|sed 's|.*directory.*|directory|'`
+			case $soubor in
+				#pokud je adresar testuju zda neni ve druhe slozce soubor
+				"directory") old_stuff=`file "$1/$myline"|sed 's|.*ERROR.*|ERROR|'|sed 's|.*directory.*|directory|'`
+									case $old_stuff in
+										"directory") continue;;
+										"ERROR") continue;;
+										*) echo "$myline" >>"/tmp/$muj_soubor/rozdily";;
+									esac
+								continue
+							;;
+				#pokud se v jedne nenachazi testuji zda to neni ve druhe slozce soubor			
+				"ERROR") old_stuff=`file "$1/$myline"|sed 's|.*directory.*|directory|'`
+							case $old_stuff in
+								"directory") continue;;
+								*) echo "$myline" >>"/tmp/$muj_soubor/rozdily";;
+							esac
+							;;
+				#pokud narazim na soubor provedu diff a pokud jsou ruzne vypisi
+				*) old_stuff=`file "$1/$myline"|sed 's|.*ERROR.*|ERROR|'|sed 's|.*directory.*|directory|'`
+					case $old_stuff in
+						"directory") echo "$myline" >>"/tmp/$muj_soubor/rozdily"
+										continue
+										;;
+						"ERROR") echo "$myline" >>"/tmp/$muj_soubor/rozdily";;
+						*)	rozdily=`diff -qa $2/$myline $1/$myline|sed "s|.*$myline.*|rozdilne|"`
+								case $rozdily in
+									"rozdilne") echo "$myline" >>"/tmp/$muj_soubor/rozdily";;
+									*) continue;;
+								esac
+					esac
+					;;
+			esac	
+		done < "/tmp/$muj_soubor/stuff_soubor"
+}
+#volani funkci pro rozbaleni archivu
+vystup=`file $1`
+dostan "$vystup"
+rozbal $typ $1 $old
+
+vystup=`file $2`
+dostan "$vystup"
+rozbal $typ $2 $new
+
+#------------------------------
+#---------- zabaleni ----------
+#------------------------------
+function zabal
+{
+case $1 in
+	".zip" | ".ZIP") 	
+				where_am_i=`pwd`
+				cd "$2"
+				sbal_ji=`ls`
+				zip -rq $oparam $sbal_ji
+				mv "$oparam" "$where_am_i"
+				cd "$where_am_i"
+		;;
+	".tar") 
+				where_am_i=`pwd`
+				cd "$2"
+				sbal_ji=`ls`
+				tar -cf $oparam $sbal_ji
+				mv "$oparam" "$where_am_i"
+				cd "$where_am_i"
+		;;
+	".tgz" | ".tar.gz")
+				where_am_i=`pwd`
+				cd "$2"
+				sbal_ji=`ls`
+				tar -cf $oparam -z $sbal_ji
+				mv "$oparam" "$where_am_i"
+				cd "$where_am_i"
+		;;
+	".tar.bz2")
+				where_am_i=`pwd`
+				cd "$2"
+				sbal_ji=`ls`
+				tar -cf $oparam -j $sbal_ji
+				mv "$oparam" "$where_am_i"
+				cd "$where_am_i"
+		;;	
+esac
+}
+
+
+#------------------------------
+#-------- parametr -l ---------
+#------------------------------
+if $lparam; then
+	zapis_rozdily $old $new
+	cat "/tmp/$muj_soubor/rozdily"
+	rm -f "/tmp/$muj_soubor/rozdily"
+
+#------------------------------
+#-------- parametr -c ---------
+#------------------------------
+elif  $cparam  &&  $paramo ; then
+zapis_rozdily $old $new
+
+koncovka=`echo "$oparam"|sed 's|.*\(\.zip\)|\1|'|
+sed 's|.*\(\.tar.*\)|\1|'|sed 's|.*\(\.tgz\)|\1|'`
+
+diff_file=`mktemp -dq /tmp/$muj_soubor/diff_soubor.XXXXXXXXXXX`
+while read radka
+do
+	line=`echo "/$radka"`
+	adresar=`echo "$line"|grep '/.*/'|sed 's|\(/.*/\).*|\1|'`
+	mkdir -p "$diff_file$adresar"
+	novy_soubor=`file "$new$line"|sed "s|.*ERROR.*|ERROR|"|sed "s|.*directory.*|directory|"`
+	case $novy_soubor in
+		"ERROR")
+		#pokud je soubor v adresari, ktery neni v prvnim archivu vytvorim si docasnou slozku, do ktere ulozim soubor
+			docasny_adresar=`mktemp -dq /tmp/$muj_soubor/docasny_adresarXXXXXXXXXXX`
+			mkdir -p "$docasny_adresar$adresar"
+			diff -uaN "$old$line" "$docasny_adresar$line"  > "$diff_file$line.patch"
+			najdi=`sed "s|$docasny_adresar|b|"<"$diff_file$line.patch"` #odstranim stopu v patchnutem souboru
+			echo "$najdi" > "$diff_file$line.patch"
+			rm -rf "$docasny_adresar"
+			;;
+
+		#pokud se soubor nachazi pouze v jednom adresari musim jej vytvorit take v druhem
+		"directory") 
+			docasny=`mktemp -dq /tmp/$muj_soubor/docasny_adresar.XXXXXXXXXXX` #vytvorim si docasny adresar
+			mkdir -p "$docasny$adresar"
+			diff -uaN "$old$line" "$docasny$line"  > "$diff_file$line.patch"
+			najdi=`sed "s|$docasny|b|"<"$diff_file$line.patch"` #odstranim stopu v patchnutem souboru
+			echo "$najdi" > "$diff_file$line.patch"
+			rm -rf $docasny
+			;;
+
+		*)
+			stary_soubor=`file "$old$line"|sed "s|.*ERROR.*|ERROR|"|sed "s|.*directory.*|directory|"`
+			case $stary_soubor in
+				"ERROR")	
+					docasny_adresar=`mktemp -dq /tmp/$muj_soubor/docasny_adresarXXXXXXXXXXX`
+					mkdir -p "$docasny_adresar$adresar"
+					diff -uaN "$docasny_adresar$line" "$new$line" > "$diff_file$line.patch"
+					najdi=`sed "s|$docasny_adresar|a|"<"$diff_file$line.patch"|sed "s|$new|b|"` #odstranim stopu v patchnutem souboru
+					echo "$najdi" > "$diff_file$line.patch"
+					rm -rf "$docasny_adresar"
+				;;
+				"directory")
+					docasny=`mktemp -dq /tmp/$muj_soubor/docasny_adresarXXXXXXXXXXX` #vytvorim si docasny adresar
+					mkdir -p "$docasny$adresar"
+					diff -uaN "$docasny$line" "$new$line" > "$diff_file$line.patch"
+					najdi=`sed "s|$docasny$line|b|"<"$diff_file$line.patch"` #odstranim stopu v patchnutem souboru
+					echo "$najdi" > "$diff_file$line.patch"
+					rm -rf $docasny
+				;;
+				*)
+					diff -uaN "$old$line" "$new$line"  > "$diff_file$line.patch"
+					nahrada=`sed "s|$new|b|"<"$diff_file$line.patch"|sed "s|$old|a|"`
+					echo "$nahrada" > "$diff_file$line.patch"
+			esac			 
+	esac
+	nahrada=`sed "s|$new|b|"<"$diff_file$line.patch"|sed "s|$old|a|"`
+	echo "$nahrada" > "$diff_file$line.patch"
+done < "/tmp/$muj_soubor/rozdily"
+rm -f /tmp/$muj_soubor/rozdily
+zabal $koncovka $diff_file
+
+#------------------------------
+#------ parametr -p -r -o -----
+#------------------------------
+elif "$rparam" && "$pparam" && "$paramo" ;then
+
+koncovka=`echo "$oparam"|sed 's|.*\(\.zip\)|\1|'|
+sed 's|.*\(\.tar.*\)|\1|'|sed 's|.*\(\.tgz\)|\1|'`
+
+soubory_patche=`find "$new" | grep '\.patch'|sed "s|$new\(.*\)\.patch|\1|"`
+echo "$soubory_patche" >"/tmp/$muj_soubor/opatchuj"
+
+#vytvorim si docasny adresar
+docasny=`mktemp -dq /tmp/$muj_soubor/docasny.XXXXXXXXXXX`
+while read zmeny 
+do
+	#ulozim si cestu k souboru
+	cesta=`echo $zmeny|sed 's|\(.*\)/.*|\1|'`
+	#zjistim jestli to je soubor, jestli se tam nachazi nebo jestli to je adresar
+	druh=`file "$old$zmeny"|sed 's|.*ERROR.*|ERROR|'|sed 's|.*directory.*|directory|'`
+	case $druh in
+	#pokud nenajdu adresar v archivu ktery slouzi jako zdroj patchovani vytvorim si ho tam
+		"ERROR") touch "$docasny$zmeny";;
+		"directory")continue;;
+	#pokud najdu soubor vytvorim k nemu cestu
+		*) mkdir -p "$docasny$cesta"
+			cp "$old$zmeny" "$docasny$zmeny"  2>/dev/null;;
+	esac
+	#zjistim jestli v docasnem souboru je prave zkoumany soubor a pokud ano provedu reverzni patch
+	zjisti_docasny=`file "$docasny$zmeny"|sed 's|.*ERROR.*|ERROR|'|sed 's|.*directory.*|directory|'`
+	case $zjisti_docasny in
+		"ERROR") continue;;
+		"directory") continue;;
+		*)patch -R "$docasny$zmeny" -r "/dev/null" <"$new$zmeny.patch" >"/dev/null";;
+	esac
+
+done </"tmp/$muj_soubor/opatchuj"
+rm -f "/tmp/$muj_soubor/opatchuj"
+zabal $koncovka $docasny
+
+#------------------------------
+#-------- parametr -p -o ------
+#------------------------------
+elif "$pparam" && "$paramo" ; then
+
+koncovka=`echo "$oparam"|sed 's|.*\(\.zip\)|\1|'|
+sed 's|.*\(\.tar.*\)|\1|'|sed 's|.*\(\.tgz\)|\1|'`
+
+soubory_patche=`find "$new" | grep '\.patch'|sed "s|$new\(.*\)\.patch|\1|"`
+echo "$soubory_patche" >"/tmp/$muj_soubor/opatchuj"
+
+#vytvorim si docasny adresar
+docasny=`mktemp -dq /tmp/$muj_soubor/docasny.XXXXXXXXXXX`
+while read zmeny 
+do
+	cesta=`echo $zmeny|sed 's|\(.*\)/.*|\1|'`
+	druh=`file "$old$zmeny"|sed 's|.*ERROR.*|ERROR|'|sed 's|.*directory.*|directory|'`
+	case $druh in
+	#pokud nenajdu adresar v archivu ktery slouzi jako zdroj patchovani vytvorim si ho tam
+		"ERROR") 
+				mkdir -p "$docasny$cesta" 2>"/tmp/$muj_soubor/chyba"
+				hlaseni=`sed "s|.*„\(.*\)“.*|\1|"<"/tmp/$muj_soubor/chyba"`
+				rm -f "$hlaseni"
+				rm -f "chyba"
+				mkdir -p "$docasny$cesta"
+				touch "$docasny$zmeny"
+			;;
+		"directory")continue;;
+	#pokud najdu soubor vytvorim k nemu cestu
+		*) mkdir -p "$docasny$cesta"
+			cp "$old$zmeny" "$docasny$zmeny"2>/dev/null;; 
+	esac
+	#zjistim jestli v docasnem souboru je prave zkoumany soubor a pokud ano provedu patch
+	zjisti_docasny=`file "$docasny$zmeny"|sed 's|.*ERROR.*|ERROR|'|sed 's|.*directory.*|directory|'`
+	case $zjisti_docasny in
+		"ERROR") continue;;
+		"directory") continue;;
+		*)patch -N "$docasny$zmeny" -r "/dev/null" <"$new$zmeny.patch" >"/dev/null";;
+	esac
+done <"/tmp/$muj_soubor/opatchuj"
+rm -f "/tmp/$muj_soubor/opatchuj"
+zabal $koncovka $docasny
+
+#pokud byli zadany spatne prepinace vypisi napovedu
+else
+	echo "chyba v prepinaci prectete si napovedu
+$HELP"
+fi
+
+#------------------------------
+#-------- odchyceni chyb ------
+#------------------------------
+trap "rm -r /tmp/$muj_soubor ; exit 1" 1 2 15
+
+rm -f /tmp/$muj_soubor/stuff_soubor
+rm -rf "/tmp/$muj_soubor"

@@ -1,0 +1,135 @@
+<petrinets.PetriNet>
+  <places>
+    <petrinets.Place>
+      <x>65</x>
+      <y>102</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p4</name>
+      <tag>x</tag>
+      <values>
+        <int>5</int>
+      </values>
+    </petrinets.Place>
+    <petrinets.Place>
+      <x>324</x>
+      <y>106</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p5</name>
+      <tag>y</tag>
+      <values>
+        <int>8</int>
+      </values>
+    </petrinets.Place>
+    <petrinets.Place>
+      <x>179</x>
+      <y>364</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p6</name>
+      <tag>out</tag>
+      <values/>
+    </petrinets.Place>
+    <petrinets.Place>
+      <x>547</x>
+      <y>67</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p7</name>
+      <tag>x</tag>
+      <values>
+        <int>1</int>
+        <int>2</int>
+        <int>5</int>
+        <int>8</int>
+        <int>9</int>
+      </values>
+    </petrinets.Place>
+    <petrinets.Place>
+      <x>550</x>
+      <y>369</y>
+      <width>30</width>
+      <height>30</height>
+      <name>p9</name>
+      <tag>out</tag>
+      <values/>
+    </petrinets.Place>
+  </places>
+  <transitions>
+    <petrinets.Transition>
+      <x>157</x>
+      <y>223</y>
+      <width>88</width>
+      <height>40</height>
+      <name>e2</name>
+      <inPlaces>
+        <petrinets.Place reference="../../../../places/petrinets.Place"/>
+        <petrinets.Place reference="../../../../places/petrinets.Place[2]"/>
+      </inPlaces>
+      <outPlaces>
+        <petrinets.Place reference="../../../../places/petrinets.Place[3]"/>
+      </outPlaces>
+      <conditions>
+        <petrinets.Condition>
+          <first reference="../../../../../places/petrinets.Place"/>
+          <firstInt>0</firstInt>
+          <operator>LESS</operator>
+          <second reference="../../../../../places/petrinets.Place[2]"/>
+          <secondInt>0</secondInt>
+        </petrinets.Condition>
+      </conditions>
+      <outputs>
+        <petrinets.Output>
+          <outPlace reference="../../../../../places/petrinets.Place[3]"/>
+          <variables>
+            <petrinets.SignedVariable>
+              <sign>PLUS</sign>
+              <name>x</name>
+            </petrinets.SignedVariable>
+            <petrinets.SignedVariable>
+              <sign>PLUS</sign>
+              <name>y</name>
+            </petrinets.SignedVariable>
+          </variables>
+        </petrinets.Output>
+      </outputs>
+    </petrinets.Transition>
+    <petrinets.Transition>
+      <x>527</x>
+      <y>222</y>
+      <width>88</width>
+      <height>40</height>
+      <name>e3</name>
+      <inPlaces>
+        <petrinets.Place reference="../../../../places/petrinets.Place[4]"/>
+      </inPlaces>
+      <outPlaces>
+        <petrinets.Place reference="../../../../places/petrinets.Place[5]"/>
+      </outPlaces>
+      <conditions>
+        <petrinets.Condition>
+          <first reference="../../../../../places/petrinets.Place[4]"/>
+          <firstInt>0</firstInt>
+          <operator>GREATER</operator>
+          <secondInt>4</secondInt>
+        </petrinets.Condition>
+      </conditions>
+      <outputs>
+        <petrinets.Output>
+          <outPlace reference="../../../../../places/petrinets.Place[5]"/>
+          <variables>
+            <petrinets.SignedVariable>
+              <sign>PLUS</sign>
+              <name>x</name>
+            </petrinets.SignedVariable>
+            <petrinets.SignedVariable>
+              <sign>PLUS</sign>
+              <name>1</name>
+            </petrinets.SignedVariable>
+          </variables>
+        </petrinets.Output>
+      </outputs>
+    </petrinets.Transition>
+  </transitions>
+</petrinets.PetriNet>

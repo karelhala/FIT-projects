@@ -1,0 +1,56 @@
+#!/bin/ksh
+export LC_ALL=C
+sparam="< jmeno_funkce >" #na zacatku dam do promenne hodnotu, ktera by se nemela vyskytnout na vstupu
+
+#ziskani parametru
+while getopts  :s:h param
+do
+  case $param in
+	s) sparam="$OPTARG";; #promenna ve které mam ulozeny nazev volani
+	h) echo "	hltrace zvyrazni syntax stopy od strace.
+	Pouziti: hltrace [volby] <stopa.strace >stopa.html
+	Volby:
+  	-s SYSCALL  Specialne zvyrazni volani SYSCALL.";exit 0;;
+	\?) echo "	Nespravny argument, prectete si napovedu: -h"; exit 1;;
+	:)  echo "chybi nazev funkce"; exit 1;;
+  esac
+done
+#posloupnost sedu ktere postupne najdou a vlozi do tagu jednotlive prvky
+vysl=`sed 's/\(&\)/\&amp\;/g'|
+sed 's/\(<\)/\&lt\;/' |
+sed 's/\(>\)/\&gt\;/' |
+sed 's/\\\"/< lomit_uvozovky >/g'|
+sed 's/\("[^"]*"\)/\<span class=\"string\">\1<\/span>/g'|
+sed 's/< lomit_uvozovky >/\\\"/g'|
+sed 's/^\([0-9]*\.[0-9]*\)/\<span class="ts">\1\<\/span>/'|
+sed 's/^\([0-9]\{1,\}\)/\<span class="pid">\1\<\/span>/'|
+sed 's/\(>[[:blank:]]*\)\([0-9]*\.[0-9]*\)/\1\<span class="ts">\2\<\/span>/'|
+sed "s/\($sparam\)(/\<a href=\"http:\/\/www.kernel.org\/doc\/man\-pages\/online\/pages\/man2\/\1.2.html\" class=\"hlcall\">\1\<\/a>(/"|
+sed 's/^\([[:alnum:]*_]*\)(/\<a href="http:\/\/www.kernel.org\/doc\/man-pages\/online\/pages\/man2\/\1.2.html" class="call">\1\<\/a>(/' |
+sed 's/\(>[[:blank:]]*\)\([[:alnum:]*_]*\)(/\1\<a href="http:\/\/www.kernel.org\/doc\/man-pages\/online\/pages\/man2\/\2.2.html" class="call">\2\<\/a>(/'|
+sed 's/\([^={[:alpha:]]\)\([[:digit:]]x[[:xdigit:]]*\)/\1\<span class="number">\2\<\/span>/g'|
+sed 's/\[\([[:upper:]][[:upper:]*[:digit:]_]*\)/[<span class="const">\1\<\/span>/g'|
+sed 's/\([[:upper:]][[:upper:]*[:digit:]_]*\)\]/<span class="const">\1\<\/span>]/g'|
+sed 's/\([^[:alnum:]={]\)\([>,= (]\)\([- ]\)\([-]\)\{0,1\}\([[:digit:]]\{1,\}\)\([,]\)\{0,1\}/\1\2\<span class="number">\3\4\5\<\/span>\6/g'|
+sed 's/\([(|={[:blank:]]\)\([[:upper:]][[:upper:]*[:digit:]_]*\)\([|()},[:blank:]]\)/\1\<span class="const">\2\<\/span>\3/g'|
+sed 's/\([|]\)\([[:upper:]][[:upper:]*[:digit:]_]*\)\([|,)]\)/\1\<span class="const">\2\<\/span>\3/g'|
+sed 's/\([( ]\)\([[:digit:]]\{1,\}\)\([),]\)/\1\<span class="number">\2\<\/span>\3/g' |
+sed 's/\(\&amp;\)\([[:upper:]][[:upper:]*[:digit:]_]*\)/\1\<span class="const">\2\<\/span>/g'|
+sed 's/\([[:upper:]][[:upper:]*[:digit:]_]*\)\(\&amp;\)/\<span class="const">\1\<\/span>\2/g'|
+sed 's/<a href="http:\/\/www.kernel.org\/doc\/man-pages\/online\/pages\/man2\/.2.html" class="call"><\/a>\(.\)/\1/'|
+sed 's/<span class="ts">.<\/span>/./'|
+sed 's/<span class="number"> / <span class="number">/g'`
+
+echo "<html>
+<style>
+.pid { color:darkred; }
+.ts { color:navy; }
+.number { color:red; }
+.const { color:green; }
+.string { color:blue; }
+.hlcall { text-decoration:none; font-weight:bold; color:black; }
+.call { text-decoration:none; color:olive; }
+</style>
+<body><pre>
+$vysl
+</pre></body></html>"
