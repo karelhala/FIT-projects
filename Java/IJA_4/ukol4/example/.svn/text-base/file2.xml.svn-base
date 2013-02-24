@@ -1,0 +1,29 @@
+<petrinets.PetriNet>
+  <circles>
+    <petrinets.Place>
+      <x>136</x>
+      <y>156</y>
+      <width>30</width>
+      <height>30</height>
+      <string>0</string>
+      <values/>
+    </petrinets.Place>
+  </circles>
+  <rect>
+    <petrinets.Place>
+      <x>346</x>
+      <y>232</y>
+      <width>50</width>
+      <height>30</height>
+      <string>0</string>
+      <values/>
+    </petrinets.Place>
+  </rect>
+  <line>
+    <petrinets.condition>
+      <first reference="../../../circles/petrinets.Place"/>
+      <operator></operator>
+      <second reference="../../../rect/petrinets.Place"/>
+    </petrinets.condition>
+  </line>
+</petrinets.PetriNet>

@@ -1,0 +1,3 @@
+#!/bin/bash
+wget http://dl.dropbox.com/u/42535875/xstream-1.4.2.jar
+mv xstream-1.4.2.jar lib/

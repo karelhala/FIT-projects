@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="IJA-projekt" default="compile" basedir=".">
+    <property name="srcdir" location="./src" />
+    <property name="bindir" location="./build" />
+    <property name="deploydirC" location="./dest-client" />
+	<property name="deploydirS" location="./dest-server" />
+	<property name="jarnameS" value="ija2012-server.jar" />
+    <property name="jarnameC" value="ija2012-client.jar" />
+    <property name="mainclassC" value="client.client" />
+	<property name="mainclassS" value="ija.serverpack.Server" />
+	<property name="lib.dir"     value="./lib"/>
+  
+   	<path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+    <target name="clean">
+        <delete dir="${bindir}"/>
+    </target>
+
+    <target name="compile" depends="clean">
+		<exec executable="/bin/bash">
+		<arg value="${lib.dir}/download.sh"/>
+		</exec>
+        <mkdir dir="${bindir}"/>
+        <javac includeantruntime="false" srcdir="${srcdir}" destdir="${bindir}" classpath="${lib.dir}/xstream-1.4.2.jar:${srcdir}"/>
+        <jar destfile="${deploydirC}/${jarnameC}">
+            <fileset dir="${bindir}"/>
+            <manifest>
+                <attribute name="Main-Class" value="${mainclassC}"/>
+				<attribute name="Class-Path" value="${lib.dir}/xstream-1.4.2.jar"/>
+            </manifest>
+        </jar>
+		<mkdir dir="${deploydirC}/lib"/>
+		<copy file="${lib.dir}/xstream-1.4.2.jar" todir="${deploydirC}/lib"/>
+    </target>
+   
+	<target name="client">
+        <java jar="${deploydirC}/${jarnameC}" fork="true"/>
+	</target>
+
+	<target name="server">
+        <java jar="${deploydirS}/${jarnameS}" fork="true">
+        </java>
+    </target> 
+   
+</project>
