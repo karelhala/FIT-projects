@@ -1,0 +1,171 @@
+\documentclass[czech,a4paper,11pt,twocolumn]{article}
+\usepackage[czech]{babel}
+\usepackage[left=1.5cm,text={18cm, 25cm},top=2.5cm]{geometry}
+\usepackage[IL2]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{mdwlist}
+
+\theoremstyle{definition}
+\newtheorem{definice}{Definice}[section]
+\theoremstyle{definition}
+\newtheorem{algoritmus}[definice]{Algoritmus}
+\theoremstyle{definition}
+\newtheorem{veta}{Vìta}
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\Large
+\textsc{Vysoké uèení technické v Brnì}
+\\[-0.5mm]
+\textsc{Fakulta informaèních technologií\\}
+\vspace{\stretch{0.382}}
+\LARGE
+Typografie a publikování - 2. projekt
+\\[-0.5mm]
+\Huge
+Sazba dokumentù s matematickými výrazy\\
+\vspace{\stretch{0.618}}
+\Large{19. bøezna 2012}\hfill Karel Hala
+\end{center}
+\end{titlepage}
+
+\section{Úvod} 
+Tato úloha je zamìøena na sazbu titulní strany a~textù, které obsahují matematické vzorce, rovnice (jako tøeba (\ref{rovnice1}), (\ref{rovnice2}) a (\ref{rovnice3})) a prostøedí (napøíklad de\-finice \ref{definice3.1} na stranì \pageref{definice3.1} v sekci \ref{definice_vety}).
+
+Na titulní stranì je vyu¾ito sázení nadpisu podle optického støedu s vyu¾itím \emph{zlatého øezu}. Tento postup byl probírán na pøedná¹ce. Pro sazbu matematických elementù byly vyu¾ity balíky \AmS-\LaTeX u. 
+
+\section{Plynulý matematický text}
+Zásady pro sazbu matematiky v plynulém textu odpovídají zásadám pro smí¹enou sazbu. V \LaTeX u si mù¾eme sazbu opakovaných symbolù a jejich posloupností zjednodu¹it zavedením vlastních pøíkazù.
+
+Pro mno¾inu $M$ oznaèuje $\mathrm{card}(M)$ kardinalitu $M$.
+Pro mno¾inu $M$ reprezentuje $M^*$ volný monoid generovaný mno¾inou $M$ s operací konkatenace.
+Prvek identity ve volném monoidu $M^*$ znaèíme symbolem $\varepsilon$. 
+Nech» $M^+=M^*- \{ \varepsilon \}$. Algebraicky je tedy $M^+$ volná pologrupa generovaná mno¾inou $M$ s operací konkatenace.
+Koneènou neprázdnou mno¾inu $M$ nazvìme abeceda \emph{abeceda}.
+Pro $w\in M^*$ oznaèuje $|w|$ délku øetìzce $w$. Pro $W \subseteq M$ oznaèuje $\mathrm{occur}(w,W)$ poèet výskytù symbolù z $W$ v øetìzci $w$ a $\mathrm{sym}(w,i)$ urèuje $i$-tý symbol øetìzce $w$; napøíklad $\mathrm{sym}(abcd,3)=c$.
+
+\section{Sazba definic a vìt}
+\label{definice_vety}
+Pro sazbu definic a vìt slou¾í balík \texttt{amsthm}.
+
+\begin {definice}
+\label{definice3.1} Bezkontextová gramatika \emph{je ètveøice $G=(V,T,P,S)$, kde}
+\begin{description*}
+\item[$V$]\emph{je totální abeceda},
+\item[$T \subseteq V$]\emph{je abeceda terminálù},
+\item[$S \in (V-T)$]\emph{je startující symbol},
+\item[$P$]\emph{je koneèná mno¾ina} pravidel \emph{tvaru $q\!: A \rightarrow \alpha$,~kde $A \in (V-T)$, $\alpha \in V^*$ a $q$ je návì¹tí~tohoto~pra\-vidla.}
+\end{description*}
+
+\noindent\emph{Nech» $N=V-T$ znaèí abecedu neterminálù. Pokud $q\!: A \rightarrow \alpha$, $\gamma, \delta \in V^*$, $G$ provádí derivaèní krok z~$\gamma A \delta$ do $\gamma \alpha \delta$ podle pravidla $q\!: A \rightarrow \alpha$, symbolicky pí¹eme $\gamma A \delta \Rightarrow \gamma \alpha \delta\ [q\!: A \rightarrow \alpha]$ nebo zjednodu¹enì $\gamma A \delta \Rightarrow \gamma \alpha \delta$.
+Standardním zpùsobem definujeme $\Rightarrow^n$, kde $n \geq 0$. Dále definujeme tranzitivní uzávìr $\Rightarrow^+$ a tranzitivnì-reflexivní uzávìr $\Rightarrow^*$}.
+\end{definice}
+
+Algoritmus mù¾eme uvádìt textovì, podobnì jako definice, nebo lze pou¾ít pseudokódu vysázeného ve vhodném prostøedí (napøíklad \texttt{algorithm2e}).
+
+\begin{algoritmus}
+ Ovìøení bezkontextovosti gramatiky.
+\emph{Mìjme gramatiku} $G=(N,T,P,S)$.
+\emph{
+\begin{enumerate}
+\item \label{krok1} Pro ka¾dé pravidlo $p \in P$ proveï test, zda $p$ na levé stranì obsahuje právì jeden symbol z $N$.
+\item Pokud v¹echna pravidla splòují podmínku z kro\-ku \ref{krok1}, tak je gramatika $G$ bezkontextová.
+\end{enumerate}
+}
+\end{algoritmus}
+
+\begin{definice}
+Jazyk \emph{definovaný gramatikou $G$ definujeme jako $L(G)=\{w \in T^* \ | \ S\Rightarrow^*w \}$}.
+\end{definice}
+
+\subsection{Podsekce obsahující vìtu}
+Vìty a definice mohou mít vzájemnì nezávislé èíslování. Dùkaz se obvykle uvádí hned za vìtou.
+\begin {definice}
+\emph{Nech» $L$ je libovolný jazyk. $L$ je} bezkontextový jazyk, \emph{kdy¾ a jen kdy¾ $L=L(G)$, kde $G$ je libovolná bezkontextová gramatika}.
+\end{definice}
+
+\begin {definice}
+\emph{Mno¾inu $\mathcal{L}_{CF}=\{L|L $ je bezkon\-textový jazyk$\}$ nazýváme} tøídou bezkontextových jazykù.
+\end{definice}
+
+\begin {veta} 
+\label{veta1} \emph{Nech» $L_{abc}=\{a^nb^nc^n|n \geq 0\}$. Platí, ¾e $L_{abc} \notin \mathcal{L}_{CF}$.}
+\end{veta}
+
+\begin{proof}
+Dùkaz se provede pomocí Pumping lemma pro bezkontextové jazyky a je zøejmý, co¾ implikuje pravdivost vìty \ref{veta1}.
+\end{proof}
+
+
+\section{Rovnice a odkazy}
+
+Slo¾itìj¹í matematické formulace sázíme mimo plynulý text. Lze umístit nìkolik výrazù na jeden øádek, ale pak je tøeba tyto vhodnì oddìlit, napøíklad pøíkazem \verb|\quad|.
+
+
+$$\sqrt[3]{^1_4b^3_2}\quad \mathbb {N}=\{1,2,3,\ldots\} \quad x^{y^y} \neq x^{yy} \quad z_{i_j} \not\equiv z_{ij}$$
+
+
+V rovnici (\ref{rovnice1}) jsou vyu¾ity tøi typy závorek s rùznou explicitnì definovanou velikostí.
+
+\begin{eqnarray}
+s(x) &=& \sqrt[]{\frac{1}{k}\sum_{i=1}^{k}p_i(x_i-x)^2}  \notag\\
+x &=& -\bigg\{\Big[\big(a*b\big)^c-d \Big]+1\bigg\} \label{rovnice1}
+\end{eqnarray}
+
+
+V této vìtì vidíme, jak vypadá implicitní vysázení limity $\mathrm{lim}_{n \rightarrow \infty}f(n)$ v normálním odstavci textu. Podobnì je to i s dal¹ími symboly jako $\sum_1^n$ èi $\bigcup_{A \in B}$.
+V pøípadì vzorce $\textstyle\lim\limits_{x \to 0} \frac{\sin x}{x}=1$ jsme si vynutili ménì úspornou sazbu pøíkazem \verb|\limits|.
+
+\begin{eqnarray}
+\displaystyle \int^b_a  f(x)\, \mathrm{d}x &=&-\displaystyle\int \limits^a_b f(x)\, \mathrm{d}x \label{rovnice2}\\
+\overline{\overline{A} \wedge \overline{B}} &=& \overline{\overline{A \vee B}} \label{rovnice3}
+\end{eqnarray}
+
+Odkazy na èíslované rovnice nebo matematické výrazy se mohou v textu vyskytovat jak pøed, tak i za jejich výskytem. Proto¾e se rovnice èíslují pomocí èísel v kulatých závorkách, mìly by mít tuto podobu i odkazy na nì.
+
+\section{Slo¾ené zlomky}
+
+Pøi sázení slo¾ených zlomkù dochází ke zmen¹ování pou¾itého písma v èitateli a jmenovateli. Toto chování není v¾dy ¾ádoucí, proto¾e nìkteré zlomky potom mohou být obtí¾nì èitelné.
+
+V tìchto pøípadech je mo¾né nastavit standardní stupeò písma v podvýrazech ruènì pomocí pøíkazu \verb|\displaystyle| u vysázených vzorcù nebo pomocí \verb|\textstyle| u vzorcù, které jsou souèástí textu. Srovnejte:
+
+$$\frac{\frac{x+y}{(a+b+c)^{3}}-\frac{x-y}{\frac{ac}{b}}}{1-\frac{a+b}{c(a-b)}}\quad \frac{\frac{\displaystyle x+y}{\displaystyle (a+b+c)^{3}}-\displaystyle \frac{x-y} {\displaystyle\frac{ac} {b}}} {\displaystyle 1-\frac{a+b}{c(a-b)}}$$
+
+Tento postup lze pou¾ít nejen u zlomkù.
+
+$${\displaystyle\prod^{m-1}_{i=0}(n-i)=\underbrace{n(n-1)(n-2)\ldots (n-m+1)}_{\displaystyle\textrm{$m$ je poèet èinitelù}}}$$
+
+\section{Matice}
+Pro sázení matic se velmi èasto pou¾ívá prostøedí \texttt{array} a závorky (\verb|\left|, \verb|\right|). Tyto pøíkazy v¾dy tvoøí pár a nelze je pou¾ít samostatnì.
+
+$$\left( \begin{array}{cc}
+\widetilde{c+d} & a-b \\
+\aleph & \tilde{b} \\
+\vec{a} & \frac{a}{b} \\
+\vartheta & \underrightarrow{AC} \end{array} \right) $$ 
+
+$$ \displaystyle C~= \left\| \begin{array}{cccc}
+c_{11} & c_{12} & \cdots & c_{1n} \\
+c_{21} & c_{22} & \cdots & c_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+c_{m1} & c_{m2} & \cdots & c_{mn} \end{array} \right\|$$ 
+
+$$\left| \begin{array}{cc}
+d & e \\
+t & u \\
+\end{array} \right|
+= du-et $$
+
+Prostøedí \texttt{array} lze úspì¹nì vyu¾ít i jinde.
+
+$${n\choose k} = \left\{ \begin{array}{ll}
+\displaystyle \frac{n!}{k!(n-k)!} & \quad \mbox{pro $0 \leq k~\leq n$ }\\
+0 & \quad \mbox{pro $k<0$ nebo $k>n$ }\end{array} \right.$$ 
+
+\section{Závìrem}
+V pøípadì, ¾e budete potøebovat vyjádøit matema\-tickou konstrukci nebo symbol a nebude se Vám daøit jej nalézt v samotném \LaTeX u, doporuèuji prostudovat mo¾nosti balíku maker \AmS-\LaTeX.
+Analogická pouèka platí obecnì pro jakoukoli matematickou konstrukci v \TeX u.
+\end{document}

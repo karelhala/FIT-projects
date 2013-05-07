@@ -1,0 +1,50 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[left=2cm,text={17cm, 24cm},top=3cm]{geometry}
+\usepackage[latin2]{inputenc}
+\usepackage[IL2]{fontenc}
+\usepackage[czech]{babel}
+\usepackage{url}
+\newcommand\myuv[1]{\quotedblbase #1\textquotedblleft}
+\DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\Huge
+\textsc{Vysoké uèení technické v~Brnì}\\
+\huge
+\textsc{Fakulta informaèních technologií}\\
+\vspace {\stretch{0.382}}
+\LARGE{Typografie~a publikování - 4. projekt}\\
+\Huge{Bibliografické citace}\\
+\vspace{\stretch{0.618}}
+\end{center}
+\Large{16.dubna 2013 \hfill Karel Hala}
+\end{titlepage}
+
+\newpage
+
+\section*{Typografie}
+Pro vytváøení dokumentù se stále hodí \LaTeX~je sice zastaralý, ale to neznamená ¾e není funkèní, právì naopak, je velice robustní~a stále hojnì vyu¾ívaný. Pro nauèení v \LaTeX~doporuèiji urèitì knihu \cite{Daly_Helmut:Latex_kompletni_pruvodce}, která provede ètenáøe absolutnì od základù a¾ po ty nejpokroèilej¹í vìci. Pokud by ètenáøe zajímala star¹í, ale stále jistì velice u¾iteèná kniha~a nebojí se èíst anglicky, doporuèuji ètenáøi pøeèíst knihu \cite{LESLIE_LAMPORT:LATEX_A_DOCUMENT_PREPARATION_SYSTEM}.
+
+
+\section*{Nette}
+Pro nauèení nette je dobrý tutoriál na stránkách \emph{root.cz} jako tøeba na \cite{David:Nette_framework_produktivita}. Nicménì je zde seriál~o star¹ím nette, proto doporuèuji manuálové stránky \emph{nette.org}~a to pøesnìjí \cite{David:nette} na internetu je mnoho tutoriálù uvedu napøiklad ze stranky \emph{latrine.dgx.cz} tutoriál zaèínající \cite{David:zaciname}.
+
+\section*{Poèítaèe, open source}
+Pokud Vás zajímají technologie~a pøesnìji open source, doporuèím Vám èlánek \cite{open_source:clanek1} pojednává~o zpùsobu jak èelit hospodáøské krizi~a jak ji vyøe¹ili na Islandì.
+
+Jestli chete zjistit, jak nás obèany, okrádají správci autorských práv, doporuèuji si pøeèíst èlánek \cite{open_source:clanek2} urèitì jej najdete velice zajímavý.
+
+Pokud Vás zajímá probouzející se technologie cloud pøeètìte si bakaláøskou práci \cite{Martin:cloud} urèitì Vás velice zaujme~a zjistíte mnoho nového~o této novì zaèínající technologii v oblasti IT.
+
+Za studium na FITu jsem si velice oblíbil Javu, proto Vám doporuèuji pøeèíst diplomovou práci \cite{Miroslav:java}. Tato diplomová práce pojednává~o e-lerningovém kurzu, který vytvoøil student fakulty informatické na èVUT.
+
+Pokud se chcete dozvìdìt cokoliv~o poèítaèích velice doporuèuji èasopis \cite{computer:casopis}, zde by jste mìli najít v¹e co hledáte.
+
+\newpage
+\bibliographystyle{czechiso}
+\def\refname{Pou¾itá literatura}
+\bibliography{proj4}
+
+\end{document}
