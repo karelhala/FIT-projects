@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="IJA-projekt" default="compile" basedir=".">
+	<!-- nastaveni cest k jednotlivym adresarum -->
     <property name="srcdir" location="./src" />
     <property name="bindir" location="./build" />
     <property name="deploydirC" location="./dest-client" />
@@ -18,33 +19,47 @@
         <delete dir="${bindir}"/>
     </target>
 
+	<!-- jednoduchy compile -->
     <target name="compile" depends="clean">
+		
+		<!-- spusteni scriptu pro stazeni knihovny -->
 		<exec executable="/bin/bash">
 		<arg value="${lib.dir}/download.sh"/>
 		</exec>
+		
+		<!-- vytvoreni adresare s binarnimi soubory -->
         <mkdir dir="${bindir}"/>
         <javac includeantruntime="false" srcdir="${srcdir}" destdir="${bindir}" classpath="${lib.dir}/xstream-1.4.2.jar:${srcdir}"/>
+        
+        <!-- vytvoreni slozky a build clienta -->
         <jar destfile="${deploydirC}/${jarnameC}">
             <fileset dir="${bindir}"/>
             <manifest>
-                <attribute name="Main-Class" value="${mainclassC}"/>
-				<attribute name="Class-Path" value="${lib.dir}/xstream-1.4.2.jar"/>
+                <attribute name="Main-Class" value="${mainclassC}"/> <!-- cesta k hlavni tride clienta -->
+				<attribute name="Class-Path" value="${lib.dir}/xstream-1.4.2.jar"/> <!-- cesta ke knihovne xstream -->
             </manifest>
         </jar>
+        <!-- vytvoreni /lib slozky v clientovi -->
 		<mkdir dir="${deploydirC}/lib"/>
 		<copy file="${lib.dir}/xstream-1.4.2.jar" todir="${deploydirC}/lib"/>
-
+		<!-- konec buildu clienta -->
+		
+		<!-- vytvoreni slozky a build serveru -->
 		<javac includeantruntime="false" srcdir="${srcdir}" destdir="${bindir}" classpath="${lib.dir}/xstream-1.4.2.jar:${srcdir}"/>
         <jar destfile="${deploydirS}/${jarnameS}">
             <fileset dir="${bindir}"/>
             <manifest>
-                <attribute name="Main-Class" value="${mainclassS}"/>
-				<attribute name="Class-Path" value="${lib.dir}/xstream-1.4.2.jar"/>
+                <attribute name="Main-Class" value="${mainclassS}"/> <!-- cesta k hlavni tride serveru -->
+				<attribute name="Class-Path" value="${lib.dir}/xstream-1.4.2.jar"/> <!-- cesta ke knihovne xstream -->
             </manifest>
         </jar>
+        
+        <!-- vytvoreni lib slozky v serveru -->
 		<mkdir dir="${deploydirS}/lib"/>
 		<copy file="${lib.dir}/xstream-1.4.2.jar" todir="${deploydirS}/lib"/>
+		<!-- konec buildu serveru -->
 
+		<!-- vytvoreni dokumentace z komentaru -->
 		<javadoc sourcepath="${srcdir}" destdir="${doc}">
 	    	<classpath>
 		        <fileset dir="${lib.dir}">
@@ -52,15 +67,19 @@
 	        	</fileset>
 	    	</classpath>
 		</javadoc>
+	<!-- konec buildu -->	
     </target>
    
+	<!-- pojdme spustit clienta -->
 	<target name="client">
         <java jar="${deploydirC}/${jarnameC}" fork="true"/>
+    <!-- konec spousteni clienta -->
 	</target>
-
+	
+	<!-- Pojdme zpustit server -->
 	<target name="server">
-        <java jar="${deploydirS}/${jarnameS}" fork="true">
-        </java>
+        <java jar="${deploydirS}/${jarnameS}" fork="true"/>
+    <!-- konec spousteni serveru -->
     </target> 
    
 </project>
